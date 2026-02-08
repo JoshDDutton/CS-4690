@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>UVU Student Logs</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="https://www.uvu.edu/favicon.ico" />
+    
+    <!-- UVU Official Fonts - Rajdhani and Lato from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css" />
+    
+    <!-- Axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-content">
+          <div class="header-left">
+            <img src="https://uvu.edu/_common/images/uvu-mono.svg" alt="Utah Valley University Logo" class="uvu-logo" />
+            <h1>Student Logs</h1>
+          </div>
+          <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+            <span class="theme-icon">🌙</span>
+          </button>
+        </div>
+      </header>
+      
+      <main>
+        <form id="logForm">
+          <!-- Course Selection -->
+          <div class="form-group">
+            <label for="course">Select Course</label>
+            <select
+              aria-label="Select Course"
+              id="course"
+              name="course"
+              data-cy="course_select"
+            >
+              <option selected value="">Choose Courses</option>
+              <!-- Options populated dynamically via AJAX -->
+            </select>
+          </div>
+
+          <!-- UVU ID Input - Hidden until course is selected -->
+          <div class="form-group" id="uvuIdSection" style="display: none;">
+            <label for="uvuId">UVU ID</label>
+            <input 
+              type="text" 
+              id="uvuId" 
+              name="uvuId" 
+              data-cy="uvuId_input"
+              placeholder="10234567"
+              maxlength="8"
+              pattern="[0-9]*"
+              inputmode="numeric"
+            />
+          </div>
+
+          <!-- Student Logs Display - Hidden until valid UVU ID -->
+          <div id="logsSection" style="display: none;">
+            <h3 id="uvuIdDisplay" data-cy="uvuIdDisplay"></h3>
+            <ul data-cy="logs" id="logsList">
+              <!-- Logs populated dynamically via AJAX -->
+            </ul>
+
+            <!-- New Log Entry -->
+            <div class="form-group">
+              <label for="logTextarea">New Log</label>
+              <textarea
+                id="logTextarea"
+                style="height: 75px"
+                aria-label="add log textarea"
+                data-cy="log_textarea"
+              ></textarea>
+              <button type="submit" data-cy="add_log_btn" id="addLogBtn" disabled>Add Log</button>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
+<!-- 
+DONE: set the lang attribute to American English (lang="en-US")
+DONE: set the characterset to utf8 (<meta charset="UTF-8" />)
+DONE: temporarily use stackoverflow's favicon
+DONE: Load the CSS file (style.css)
+DONE: Options are dynamically populated via AJAX from /api/v1/courses
+DONE: Don't show the uvu id text input box until a course was selected
+DONE: If course ever becomes unselected, don't show the uvu id text input box
+DONE: write `10234567` as sample data on the input field (placeholder)
+DONE: Ensure the character length never exceeds 8 (maxlength="8")
+DONE: Only numbers, no letters or other characters (pattern + JS validation)
+DONE: When character length reaches 8 and it's only digits, fire off ajax request
+DONE: Dynamic logs via AJAX GET /logs?courseId=<courseID>&uvuId=<uvuID>
+DONE: Click anywhere on the log to toggle visibility of the log text
+DONE: Button disabled until logs are displayed and there's text in the textarea
+DONE: Button AJAX POSTs the textarea value to json-server
+DONE: Load the JS file (script.js)
+-->

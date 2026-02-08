@@ -1,0 +1,16 @@
+{
+  "name": "uvu-student-logs",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "server": "json-server db.json --routes routes.json",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "test": "cypress run",
+    "test:headed": "cypress run --headed"
+  },
+  "devDependencies": {
+    "json-server": "0.17.0",
+    "cypress": "^13.6.0"
+  }
+}
