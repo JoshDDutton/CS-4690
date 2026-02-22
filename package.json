@@ -3,14 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "server": "json-server db.json --routes routes.json",
+    "build": "tsc && copyfiles -f node_modules/jquery/dist/jquery.min.js node_modules/bootstrap/dist/js/bootstrap.bundle.min.js public/js/ && copyfiles -f node_modules/bootstrap/dist/css/bootstrap.min.css public/css/",
+    "server": "json-server db.json --routes routes.json --static public --port 8080",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "test": "cypress run",
     "test:headed": "cypress run --headed"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.33",
+    "copyfiles": "^2.4.1",
+    "cypress": "^13.6.0",
     "json-server": "0.17.0",
-    "cypress": "^13.6.0"
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "jquery": "^4.0.0"
   }
 }
