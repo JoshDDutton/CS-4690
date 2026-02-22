@@ -1,11 +1,64 @@
-# Project 2 - Implementation Summary
+# UVU Student Logs - Project Summary
+
+---
+
+## Project 3 - Implementation Summary
+
+### Overview
+TypeScript conversion, jQuery/Bootstrap integration, and full jQuery-style DOM manipulation.
+
+### 1. TypeScript Conversion
+- **Source:** `src/script.ts` compiles to `public/script.js`
+- **Build:** `npm run build` runs `tsc` and copies vendor libs
+- **Config:** `tsconfig.json` with strict mode, ES2020 target
+
+### 2. jQuery and Bootstrap - CDN First, Local Fallback
+- **jQuery:** CDN (code.jquery.com), fallback to `public/js/jquery.min.js`
+- **Bootstrap CSS:** CDN (cdn.jsdelivr.net), fallback to `public/css/bootstrap.min.css`
+- **Bootstrap JS:** CDN, fallback to `public/js/bootstrap.bundle.min.js`
+- **Local copies:** Copied from node_modules during `npm run build`
+
+### 3. Bootstrap Styling (No Custom CSS)
+- **Deleted:** `public/style.css`
+- **Styling:** Bootstrap 5.3 classes only (container, card, form-control, list-group, btn, etc.)
+- **Dark mode:** Bootstrap's `data-bs-theme` with theme toggle
+
+### 4. jQuery AJAX (Replaced Axios)
+- `$.ajax()` for GET/POST
+- `$.get()` / `$.post()` patterns
+- `.done()`, `.fail()`, `.always()` for handling
+
+### 5. jQuery DOM Manipulation
+- `$(function(){})` instead of `document.addEventListener('DOMContentLoaded')`
+- `$('#id')` for element selection
+- `.on()`, `.click()`, `.val()`, `.html()`, `.append()`, `.toggleClass()`, etc.
+- No `document.*` or `window.onload`
+- No conversion to raw elements (`$('#foo')[0]`)
+
+### 6. Cypress Tests (Bonus 10%)
+- 70 tests across 4 spec files
+- `jquery.cy.js` - jQuery integration
+- `student-logs.cy.js` - Core functionality
+- `uvu-branding.cy.js` - UVU branding with Bootstrap
+- `dark-light-mode.cy.js` - Theme toggle and persistence
+
+### To Run
+```bash
+npm run build    # Compile TypeScript, copy vendor libs
+npm run server   # json-server with static files on port 8080
+npm run cy:run   # Run Cypress tests
+```
+
+---
+
+## Project 2 - Implementation Summary
 
 ## Overview
 This document outlines all changes made to implement the three main requirements: Axios integration, UVU branding, and Dark/Light mode functionality.
 
 ---
 
-## 1. AXIOS INTEGRATION ✅
+## 1. AXIOS INTEGRATION 
 
 ### Changes Made:
 - **Replaced all fetch calls with axios** throughout the application
@@ -30,7 +83,7 @@ This document outlines all changes made to implement the three main requirements
 
 ---
 
-## 2. UVU BRANDING ✅
+## 2. UVU BRANDING 
 
 ### Official Colors Implemented:
 - **Primary: UVU Green** - `#185c33` (RGB: 24, 92, 51)
@@ -78,7 +131,7 @@ This document outlines all changes made to implement the three main requirements
 
 ---
 
-## 3. DARK/LIGHT MODE ✅
+## 3. DARK/LIGHT MODE 
 
 ### Theme Toggle UI:
 - **Button Location**: Top-right corner of header
@@ -153,7 +206,7 @@ OS Pref: [light|dark|unknown]
 
 ---
 
-## 4. CYPRESS TESTS (BONUS - 10%) ✅
+## 4. CYPRESS TESTS (BONUS - 10%) 
 
 ### Test Suite Overview:
 Created comprehensive Cypress test suite with **4 test files** containing **75+ test cases**.
@@ -264,7 +317,7 @@ npm run test:headed
 
 ---
 
-## Checklist ✅
+## Checklist 
 
 ### Axios:
 - [x] All fetch calls replaced with axios

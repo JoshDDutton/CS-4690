@@ -143,11 +143,11 @@ describe('Student Logs - Core Functionality', () => {
         if ($li.length > 0 && !$li.hasClass('no-logs')) {
           // Click to hide
           cy.wrap($li).click();
-          cy.wrap($li).find('pre').should('have.class', 'hidden');
+          cy.wrap($li).find('pre').should('have.class', 'd-none');
           
           // Click to show
           cy.wrap($li).click();
-          cy.wrap($li).find('pre').should('not.have.class', 'hidden');
+          cy.wrap($li).find('pre').should('not.have.class', 'd-none');
         }
       });
     });

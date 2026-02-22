@@ -5,13 +5,14 @@
 
 describe('Dark/Light Mode', () => {
   beforeEach(() => {
-    // Clear localStorage before each test
     cy.clearLocalStorage();
+    cy.intercept('GET', '/api/v1/courses').as('getCourses');
   });
 
   describe('Theme Toggle UI', () => {
     it('should display theme toggle button', () => {
       cy.visit('/');
+      cy.wait('@getCourses');
       cy.get('#themeToggle')
         .should('exist')
         .and('be.visible');
@@ -19,6 +20,7 @@ describe('Dark/Light Mode', () => {
 
     it('should have accessible label for theme toggle', () => {
       cy.visit('/');
+      cy.wait('@getCourses');
       cy.get('#themeToggle')
         .should('have.attr', 'aria-label')
         .and('include', 'dark')
@@ -27,6 +29,7 @@ describe('Dark/Light Mode', () => {
 
     it('should display theme icon (moon or sun)', () => {
       cy.visit('/');
+      cy.wait('@getCourses');
       cy.get('#themeToggle .theme-icon')
         .should('exist')
         .and('be.visible')
@@ -37,38 +40,53 @@ describe('Dark/Light Mode', () => {
 
   describe('Theme Switching', () => {
     it('should toggle from light to dark mode when clicked', () => {
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          cy.stub(win, 'matchMedia').returns({ matches: false });
+        },
+      });
+      cy.wait('@getCourses');
       
       // Start in light mode (default)
-      cy.get('html').should('have.attr', 'data-theme', 'light');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'light');
       
       // Click toggle
       cy.get('#themeToggle').click();
       
       // Should be in dark mode
-      cy.get('html').should('have.attr', 'data-theme', 'dark');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'dark');
       
       // Icon should change to sun
       cy.get('#themeToggle .theme-icon').invoke('text').should('equal', '☀️');
     });
 
     it('should toggle from dark to light mode when clicked twice', () => {
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          cy.stub(win, 'matchMedia').returns({ matches: false });
+        },
+      });
+      cy.wait('@getCourses');
       
       // Toggle to dark
       cy.get('#themeToggle').click();
-      cy.get('html').should('have.attr', 'data-theme', 'dark');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'dark');
       
       // Toggle back to light
       cy.get('#themeToggle').click();
-      cy.get('html').should('have.attr', 'data-theme', 'light');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'light');
       
       // Icon should change to moon
       cy.get('#themeToggle .theme-icon').invoke('text').should('equal', '🌙');
     });
 
     it('should apply different styles in dark mode', () => {
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          cy.stub(win, 'matchMedia').returns({ matches: false });
+        },
+      });
+      cy.wait('@getCourses');
       
       // Get background color in light mode
       let lightBgColor;
@@ -89,7 +107,12 @@ describe('Dark/Light Mode', () => {
 
   describe('Theme Persistence', () => {
     it('should save theme preference to localStorage', () => {
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          cy.stub(win, 'matchMedia').returns({ matches: false });
+        },
+      });
+      cy.wait('@getCourses');
       
       // Toggle to dark mode
       cy.get('#themeToggle').click();
@@ -99,7 +122,12 @@ describe('Dark/Light Mode', () => {
     });
 
     it('should persist theme preference across page reloads', () => {
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          cy.stub(win, 'matchMedia').returns({ matches: false });
+        },
+      });
+      cy.wait('@getCourses');
       
       // Toggle to dark mode
       cy.get('#themeToggle').click();
@@ -114,8 +142,12 @@ describe('Dark/Light Mode', () => {
     });
 
     it('should persist light theme preference', () => {
-      // Set dark mode first
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          cy.stub(win, 'matchMedia').returns({ matches: false });
+        },
+      });
+      cy.wait('@getCourses');
       cy.get('#themeToggle').click();
       cy.getLocalStorage('theme').should('equal', 'dark');
       
@@ -168,6 +200,7 @@ describe('Dark/Light Mode', () => {
           cy.spy(win.console, 'log').as('consoleLog');
         },
       });
+      cy.wait('@getCourses');
       
       // Verify all three preferences are logged
       cy.get('@consoleLog').then((log) => {
@@ -181,29 +214,26 @@ describe('Dark/Light Mode', () => {
     });
 
     it('should use stored user preference when available', () => {
-      // Set preference before visiting
-      cy.window().then((win) => {
-        win.localStorage.setItem('theme', 'dark');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          win.localStorage.setItem('theme', 'dark');
+        },
       });
+      cy.wait('@getCourses');
       
-      cy.visit('/');
-      
-      // Should start in dark mode
-      cy.get('html').should('have.attr', 'data-theme', 'dark');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'dark');
     });
 
     it('should default to light mode when no preferences exist', () => {
       cy.visit('/', {
         onBeforeLoad(win) {
-          // Mock matchMedia to return no preference
-          win.matchMedia = cy.stub().returns({
-            matches: false,
-          });
+          win.matchMedia = cy.stub().returns({ matches: false });
         },
       });
+      cy.wait('@getCourses');
       
       // Should default to light
-      cy.get('html').should('have.attr', 'data-theme', 'light');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'light');
     });
   });
 
@@ -211,70 +241,58 @@ describe('Dark/Light Mode', () => {
     it('should detect and use browser dark mode preference', () => {
       cy.visit('/', {
         onBeforeLoad(win) {
-          // Mock prefers-color-scheme: dark
           cy.stub(win, 'matchMedia')
             .withArgs('(prefers-color-scheme: dark)')
-            .returns({
-              matches: true,
-            })
+            .returns({ matches: true })
             .withArgs('(prefers-color-scheme: light)')
-            .returns({
-              matches: false,
-            });
+            .returns({ matches: false });
         },
       });
+      cy.wait('@getCourses');
       
-      // Should start in dark mode (following browser preference)
-      cy.get('html').should('have.attr', 'data-theme', 'dark');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'dark');
     });
 
     it('should detect and use browser light mode preference', () => {
       cy.visit('/', {
         onBeforeLoad(win) {
-          // Mock prefers-color-scheme: light
           cy.stub(win, 'matchMedia')
             .withArgs('(prefers-color-scheme: dark)')
-            .returns({
-              matches: false,
-            })
+            .returns({ matches: false })
             .withArgs('(prefers-color-scheme: light)')
-            .returns({
-              matches: true,
-            });
+            .returns({ matches: true });
         },
       });
+      cy.wait('@getCourses');
       
-      // Should start in light mode
-      cy.get('html').should('have.attr', 'data-theme', 'light');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'light');
     });
   });
 
   describe('Theme Preference Priority', () => {
     it('should prioritize user preference over browser preference', () => {
-      // Set user preference to light
-      cy.window().then((win) => {
-        win.localStorage.setItem('theme', 'light');
-      });
-      
       cy.visit('/', {
         onBeforeLoad(win) {
-          // Mock browser preference as dark
+          win.localStorage.setItem('theme', 'light');
           cy.stub(win, 'matchMedia')
             .withArgs('(prefers-color-scheme: dark)')
-            .returns({
-              matches: true,
-            });
+            .returns({ matches: true });
         },
       });
+      cy.wait('@getCourses');
       
-      // Should use user preference (light) not browser preference (dark)
-      cy.get('html').should('have.attr', 'data-theme', 'light');
+      cy.get('html').invoke('attr', 'data-theme').should('equal', 'light');
     });
   });
 
   describe('Theme Visual Changes', () => {
     it('should change card background color in dark mode', () => {
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          cy.stub(win, 'matchMedia').returns({ matches: false });
+        },
+      });
+      cy.wait('@getCourses');
       
       let lightCardBg;
       cy.get('main').then(($main) => {
@@ -290,7 +308,12 @@ describe('Dark/Light Mode', () => {
     });
 
     it('should change text color in dark mode', () => {
-      cy.visit('/');
+      cy.visit('/', {
+        onBeforeLoad(win) {
+          cy.stub(win, 'matchMedia').returns({ matches: false });
+        },
+      });
+      cy.wait('@getCourses');
       
       let lightTextColor;
       cy.get('body').then(($body) => {

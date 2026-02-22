@@ -6,7 +6,9 @@
  * Custom command to check if element has specific theme
  */
 Cypress.Commands.add('checkTheme', (theme) => {
-  cy.get('html').should('have.attr', 'data-theme', theme);
+  cy.get('html').should('satisfy', ($el) =>
+    $el.attr('data-theme') === theme || $el.attr('data-bs-theme') === theme
+  );
 });
 
 /**

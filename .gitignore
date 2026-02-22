@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Cypress
+cypress/screenshots/
+cypress/videos/
+
+# Build output (script.js is compiled from src/ - we keep it for serving)
+# public/js/ and public/css/ are needed for CDN fallback - keep them
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+*.log
